@@ -7,7 +7,7 @@ import random
 
 from .models import (
     CustomUser, PasswordResetOTP, OTPRequestHistory, LoginHistory,
-    Product, Cart, ProductImage, Address, Order, OrderItem
+    Product, Cart, ProductImage, Address, Order, OrderItem,Favourite
 )
 
 # ------------------- Signup Serializer -------------------
@@ -288,3 +288,10 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ['id', 'user', 'address', 'address_id', 'payment_mode', 'status', 'created_at','items']
         read_only_fields = ['id', 'user', 'status', 'created_at']
+
+#---------------------------------------------------------------
+class FavouriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favourite
+        fields = ['id', 'product']
+

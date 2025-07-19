@@ -118,6 +118,15 @@ class OrderItem(models.Model):
 
     def __str__(self):
         return f"{self.product.product_name} x {self.quantity}"
+    
+#------------------favourite----------------
+class Favourite(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ['user', 'product']
+
       
 
 

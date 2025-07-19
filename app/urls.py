@@ -10,7 +10,8 @@ from .views import (
     OTPRequestHistoryView, LoginHistoryView,
     ProductImageUploadView, CartListView, CartAddView, CartUpdateView, CartDeleteView,
     ProductCreateView, ProductListView, ProductUpdateView, ProductDeleteView, ProductSingleView,
-    AddressCreateView, AddressListView, AddressUpdateView, AddressDeleteView,CancelOrderView,PlaceOrderView,OrderListView
+    AddressCreateView, AddressListView, AddressUpdateView, AddressDeleteView,CancelOrderView,
+    PlaceOrderView,OrderListView,AddFavouriteView, RemoveFavouriteView, ListFavouritesView,ProductSearchView,ProductFilterView
 )
 
 urlpatterns = [
@@ -53,6 +54,16 @@ urlpatterns = [
     path('order/',PlaceOrderView.as_view(),name='order'),
     path('order/cncel/<int:order_id>/',CancelOrderView.as_view(),name='order-cancel'),
     path('orders/list/', OrderListView.as_view(), name='order-list'),
+
+    #--------------favourites-------------------
+     path('favourites/add/', AddFavouriteView.as_view(), name='add-favourite'),
+    path('favourites/remove/<int:product_id>/', RemoveFavouriteView.as_view(), name='remove-favourite'),
+    path('favourites/list/', ListFavouritesView.as_view(), name='list-favourites'),
+
+    #------------------search-----------------
+       path('products/search/', ProductSearchView.as_view(),name="product-search"),
+        path('products/filter/', ProductFilterView.as_view(), name='product-filter'),
+       
 
 
 ]

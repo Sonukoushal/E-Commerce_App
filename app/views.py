@@ -4,18 +4,19 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.db.models import Q
 
 from .serializers import (
     SignupSerializer, CustomLoginSerializer, ResendOTPSerializer,
     SendOTPSerializer, UserListSerializer, SuperUserActionSerializer,
     SetNewPasswordSerializer, OTPVerifySerializer, OTPRequestHistorySerializer,
     LoginHistorySerializer, ProductSerializer, CartSerializer, AddressSerializer,
-    OrderSerializer
+    OrderSerializer,FavouriteSerializer
 )
 
 from .models import (
     CustomUser, OTPRequestHistory, LoginHistory,
-    Product, Cart, ProductImage, Address, Order, OrderItem
+    Product, Cart, ProductImage, Address, Order, OrderItem,Favourite
 )
 
 from .permissions import IsSuperUserOnly
@@ -378,4 +379,79 @@ class OrderListView(APIView):
         user = request.user
         orders = Order.objects.filter(user=user).order_by('-created_at')
         serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+    
+
+#-----------------------------favourites------------------------
+class AddFavouriteView(APIView):
+    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        product_id = request.data.get('product')  # ✅ Match this with your Postman field
+
+        if not product_id:
+            return Response({"error": "Product is required"}, status=400)
+
+        if Favourite.objects.filter(user=request.user, product_id=product_id).exists():
+            return Response({"message": "Already in favourites"}, status=400)
+
+        Favourite.objects.create(user=request.user, product_id=product_id)
+        return Response({"message": "Added to favourites"}, status=201)
+
+    
+    
+class RemoveFavouriteView(APIView):
+    def delete(self, request, product_id):
+        try: 
+            fav = Favourite.objects.get(user=request.user, product_id=product_id)
+            fav.delete()
+            return Response({"message": "Removed from favourites"})
+        except Favourite.DoesNotExist:
+            return Response({"message": "Not in favourites"}, status=404)
+        
+
+class ListFavouritesView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        favourites = Favourite.objects.filter(user=request.user)
+        serializer = FavouriteSerializer(favourites, many=True)
+        return Response(serializer.data)
+    
+#--------------------search------------------
+class ProductSearchView(APIView):
+    def get(self, request):
+        query = request.GET.get('query', '').strip()  # ← strip removes extra space or newline
+        if not query:
+            return Response({"message": "No query provided"}, status=400)
+
+        products = Product.objects.filter(
+            Q(product_name__icontains=query) |
+            Q(brand_name__icontains=query) |
+            Q(description__icontains=query) |
+            Q(specification__icontains=query)
+        )
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+    
+
+class ProductFilterView(APIView):
+    def get(self, request):
+        brand_name = request.GET.get('brand_name')
+        min_price = request.GET.get('min_price')
+        max_price = request.GET.get('max_price')
+
+        filters = Q()
+
+        if brand_name:
+            filters &= Q(brand_name__icontains=brand_name)
+        
+        if min_price:
+            filters &= Q(price__gte=min_price)
+        
+        if max_price:
+            filters &= Q(price__lte=max_price)
+
+        products = Product.objects.filter(filters)
+        serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
