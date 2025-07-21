@@ -385,7 +385,6 @@ class OrderListView(APIView):
 #-----------------------------favourites------------------------
 class AddFavouriteView(APIView):
     permission_classes = [IsAuthenticated]
-    permission_classes = [IsAuthenticated]
     def post(self, request):
         product_id = request.data.get('product')  # ✅ Match this with your Postman field
 

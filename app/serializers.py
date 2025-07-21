@@ -291,6 +291,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
 #---------------------------------------------------------------
 class FavouriteSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
     class Meta:
         model = Favourite
         fields = ['id', 'product']
