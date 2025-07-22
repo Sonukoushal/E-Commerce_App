@@ -292,7 +292,7 @@ class AddressUpdateView(APIView):
             address = Address.objects.get(pk=pk, user=request.user)
         except Address.DoesNotExist:
             return Response({"error": "Address not found"}, status=404)
-        serializer = AddressSerializer(address, data=request.data)
+        serializer = AddressSerializer(address, data=request.data, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
