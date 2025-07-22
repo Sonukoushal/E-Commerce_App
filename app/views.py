@@ -270,7 +270,7 @@ class CartDeleteView(APIView):
 class AddressCreateView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
-        serializer = AddressSerializer(data=request.data)
+        serializer = AddressSerializer(data=request.data,context={'request': request})
         if serializer.is_valid():
             serializer.save(user=request.user)
             return Response(serializer.data, status=201)
