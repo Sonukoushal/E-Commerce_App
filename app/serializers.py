@@ -266,6 +266,15 @@ class AddressSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['user', 'created_at']
 
+    def validate(self, attrs):
+        user = self.context['request'].user
+
+        # Check if address already exists for user
+        if Address.objects.filter(user=user).exists():
+            raise serializers.ValidationError("Address already exists for this user.")
+
+        return attrs
+
 
 # ------------------- Order Serializers -------------------
 
