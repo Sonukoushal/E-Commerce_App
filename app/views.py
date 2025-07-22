@@ -428,7 +428,8 @@ class ProductSearchView(APIView):
             Q(product_name__icontains=query) |
             Q(brand_name__icontains=query) |
             Q(description__icontains=query) |
-            Q(specification__icontains=query)
+            Q(specification__icontains=query) |
+            Q(price__icontains=query)
         )
         serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
