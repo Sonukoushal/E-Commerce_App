@@ -97,7 +97,7 @@ class Cart(models.Model):
             unique_together = ('user', 'product')
 
          def __str__(self):
-          return f"{self.user.username} - {self.product.name} x {self.quantity}"
+          return f"{self.user.name} - {self.product.product_name} x {self.quantity}"
          
 #---------------------Order Model--------------------------
 class Order(models.Model):
