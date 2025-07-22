@@ -287,7 +287,7 @@ class AddressListView(APIView):
 
 class AddressUpdateView(APIView):
     permission_classes = [IsAuthenticated]
-    def put(self, request, pk):
+    def patch(self, request, pk):
         try:
             address = Address.objects.get(pk=pk, user=request.user)
         except Address.DoesNotExist:
