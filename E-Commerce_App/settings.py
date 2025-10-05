@@ -88,11 +88,17 @@ WSGI_APPLICATION = 'E-Commerce_App.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': config("DB_ENGINE"),
-        'NAME': config("DB_NAME"),
-        'USER': config("DB_USER"),
+        'NAME':   config("DB_NAME"),
+        'USER':   config("DB_USER"),
         'PASSWORD': config("DB_PASSWORD"),
-        'HOST': config("DB_HOST"),
-        'PORT': config("DB_PORT"),
+        'HOST':   config("DB_HOST"),
+        'PORT':   config("DB_PORT", default="5432"),
+        # keep connections alive for a bit (reduce churn)
+        'CONN_MAX_AGE': 600,
+        # ensure TLS/SSL is required for the connection
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
 
